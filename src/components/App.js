@@ -10,15 +10,28 @@ function App() {
 		authService.onAuthStateChanged((user) => {
 			if (user) {
 				setUserObj(user);
+				// displayName 받아올 수 있도록 수정
+				if (user.displayName === null) {
+					const name = user.email.split('@')[0];
+					user.displayName = name;
+				}
 			}
 			setInit(true);
 		});
 	}, []);
+	const refreshUser = () => {
+		const user = authService.currentUser;
+		setUserObj({ ...user });
+	};
 
 	return (
 		<>
 			{init ? (
-				<AppRouter isLoggedIn={Boolean(userObj)} userObj={userObj} />
+				<AppRouter
+					refreshUser={refreshUser}
+					isLoggedIn={Boolean(userObj)}
+					userObj={userObj}
+				/>
 			) : (
 				'Initializing...'
 			)}

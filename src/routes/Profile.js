@@ -1,15 +1,62 @@
-import { authService } from 'fbase';
-import React from 'react';
+import { authService, dbService } from 'fbase';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
+import { updateProfile } from 'firebase/auth';
 
-const Profile = () => {
+const Profile = ({ refreshUser, userObj }) => {
+	const [newDisplayName, setNewDisplayName] = useState(userObj.displayName);
 	const history = useHistory();
 	const onLogOutClick = () => {
 		authService.signOut();
 		history.push('/');
 	};
+
+	const getMyNweets = async () => {
+		const q = query(
+			collection(dbService, 'nweets'),
+			where('creatorId', '==', `${userObj.uid}`),
+			orderBy('createdAt', 'desc')
+		);
+
+		const querySnapshot = await getDocs(q);
+		querySnapshot.forEach((doc) => {
+			console.log(doc.id, '=>', doc.data());
+		});
+	};
+
+	const onChange = (e) => {
+		const {
+			target: { value },
+		} = e;
+		setNewDisplayName(value);
+	};
+
+	const onSubmit = async (e) => {
+		e.preventDefault();
+		if (userObj.displayName !== newDisplayName) {
+			await updateProfile(authService.currentUser, {
+				displayName: newDisplayName,
+			});
+			refreshUser();
+		}
+	};
+
+	useEffect(() => {
+		getMyNweets();
+	}, []);
+
 	return (
 		<>
+			<form onSubmit={onSubmit}>
+				<input
+					type='text'
+					placeholder='Display name'
+					onChange={onChange}
+					value={newDisplayName}
+				/>
+				<input type='submit' value='Update Profile' />
+			</form>
 			<button onClick={onLogOutClick}>Log Out</button>
 		</>
 	);

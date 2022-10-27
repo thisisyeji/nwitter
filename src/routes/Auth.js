@@ -47,6 +47,7 @@ const Auth = () => {
 	};
 
 	const toggleAccount = () => setNewAccount((prev) => !prev);
+
 	const onSocialClick = async (e) => {
 		const {
 			target: { name },
