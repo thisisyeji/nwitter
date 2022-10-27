@@ -9,12 +9,14 @@ function App() {
 	useEffect(() => {
 		authService.onAuthStateChanged((user) => {
 			if (user) {
-				setUserObj(user);
 				// displayName 받아올 수 있도록 수정
 				if (user.displayName === null) {
 					const name = user.email.split('@')[0];
 					user.displayName = name;
 				}
+				setUserObj(user);
+			} else {
+				setUserObj(null);
 			}
 			setInit(true);
 		});
