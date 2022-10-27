@@ -4,7 +4,7 @@ import { doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 import { storageService } from 'fbase';
 
-const Nweet = ({ nweetObj, isOwner }) => {
+const Nweet = ({ nweetObj, isOwner, userObj }) => {
 	const [editing, setEditing] = useState(false);
 	const [newNweet, setNewNweet] = useState(nweetObj.text);
 	const NweetTextRef = doc(dbService, 'nweets', `${nweetObj.id}`);
@@ -53,8 +53,14 @@ const Nweet = ({ nweetObj, isOwner }) => {
 				<>
 					<h4>{nweetObj.text}</h4>
 					{nweetObj.attachmentUrl && (
-						<img src={nweetObj.attachmentUrl} width='50px' height='50px' />
+						<img
+							src={nweetObj.attachmentUrl}
+							width='50px'
+							height='50px'
+							alt={nweetObj.attachmentUrl}
+						/>
 					)}
+					{nweetObj.creator}
 					{isOwner && (
 						<>
 							<button onClick={onDeleteClick}>Delete Nweet</button>

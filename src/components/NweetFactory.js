@@ -25,6 +25,7 @@ const NweetFactory = ({ userObj }) => {
 			text: nweet,
 			createdAt: Date.now(),
 			creatorId: userObj.uid,
+			creator: userObj.displayName,
 			attachmentUrl,
 		};
 		// 데이터 추가
